@@ -1,106 +1,98 @@
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
 import { auth } from "./firebase";
 import { useNavigate } from "react-router-dom";
-import './App.css'
 
-const Home = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSignUpActive, setisSignUpActive] = useState(true);
-  const [error, setError] = useState("");
+function Home() {
 
-  const navigate = useNavigate();
+    const [email, setemail] = useState("");
+    const [password, setpassword] = useState("")
+    const [isSignUpActive, setisSignUpActive] = useState(true)
+    const [error, seterror] = useState("")
 
-  // Getting Emails
-  function getEmail(e) {
-    setEmail(e.target.value);
-  }
+    const navigate = useNavigate()
 
-  //Getting Passwords
-  function getPassword(e) {
-    setPassword(e.target.value);
-  }
-
-  function handleSignUp() {
-    if (!email || !password) {
-      setError("Email and Password both are required");
+    function handleEmailChange(e) {
+        setemail(e.target.value)
     }
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        console.log(user);
-        navigate("/private");
-      })
-      .catch((error) => {
-        const errorCode = error.errorcode;
-        const errorMessage = error.message;
-        setError(errorMessage);
-        console.log(errorCode, errorMessage);
-      });
-  }
 
-  function handleSignIn() {
-    if (!email || !password) {
-      setError("Email and Password both are required");
-      return;
+    function handlePasswordChange(e) {
+        setpassword(e.target.value)
     }
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        console.log(user);
-      })
-      .catch((error) => {
-        const errorCode = error.errorcode;
-        const errorMessage = error.message;
-        setError(errorMessage);
-        console.log(errorCode, errorMessage);
-      });
-  }
 
-  function handleMethodChange() {
-    setisSignUpActive(!isSignUpActive);
-  }
-  return (
-    <>
-      <form>
-        {isSignUpActive && <legend>Sign Up</legend>}
-        {!isSignUpActive && <legend>Sign In</legend>}
-        <fieldset>
-          <ul>
-            <li>
-              <label htmlFor="email">Email</label>
-              <input type="email" id="email" onChange={getEmail} />
-            </li>
-            <li>
-              <label htmlFor="password">Password</label>
-              <input type="password" id="password" onChange={getPassword} />
-            </li>
-          </ul>
-          {isSignUpActive && (
-            <button type="button" onClick={handleSignUp}>
-              Sign Up
-            </button>
-          )}
-          {!isSignUpActive && (
-            <button type="button" onClick={handleSignIn}>
-              Sign In
-            </button>
-          )}
-        </fieldset>
-        {error && <p id="error-message">{error}</p>}
-        {isSignUpActive && (
-          <a onClick={handleMethodChange}>Already have an account? Sign In</a>
-        )}
-        {!isSignUpActive && (
-          <a onClick={handleMethodChange}>Do not have an account? Sign Up</a>
-        )}
-      </form>
-    </>
-  );
-};
+    function handleSignIn(e) {
+        e.preventDefault();
+        if (!email || !password) {
+            seterror('Email and password both are required')
+            return
+        }
+        signInWithEmailAndPassword(auth, email, password)
+            .then(userCredentials => {
+                const user = userCredentials.user;
+                console.log(user)
+                navigate("./private")
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                seterror(errorMessage)
+               
+            })
+    }
 
-export default Home;
+    function handleSignUp(e) {
+        e.preventDefault();
+        if (!email || !password) {
+            seterror('Email and password both are required')
+            return
+        }
+
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(userCredentials => {
+                const user = userCredentials.user;
+                console.log(user)
+
+            })
+
+            .catch((error) => {
+                const errorMessage = error.message;
+                seterror(errorMessage)
+            })
+    }
+
+    function handleMethodChange() {
+        setisSignUpActive(!isSignUpActive)
+    }
+
+    return (
+        <form>
+            {isSignUpActive && <legend>Sign Up</legend>}
+            {!isSignUpActive && <legend>Sign In </legend>}
+            <fieldset>
+                <ul>
+                    <li>
+                        <label htmlFor="email" > Email</label>
+                        <input type="email" id="email" onChange={handleEmailChange} />
+                    </li>
+                    <li>
+                        <label htmlFor="password">Password</label>
+                        <input type="password" id="password" onChange={handlePasswordChange} />
+                    </li>
+                </ul>
+                {error && <p id="error-message">{error}</p>}
+                {isSignUpActive && (
+                    <button type="button" onClick={handleSignUp}>Sign Up</button>
+                )}
+                {!isSignUpActive && (
+                    <button type="button" onClick={handleSignIn}>Sign In</button>
+                )}
+            </fieldset>
+
+            {isSignUpActive && <a onClick={handleMethodChange}>Already have an account? Sign In</a>}
+            {!isSignUpActive && <a onClick={handleMethodChange}>Don't have an account? Sign Up</a>}
+
+        </form>
+
+    )
+}
+
+export default Home

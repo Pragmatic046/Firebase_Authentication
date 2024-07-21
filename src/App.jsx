@@ -8,41 +8,37 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 
 function App() {
-  const [user, setuser] = useState(null);
-  const [isFetching, setisFetching] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setuser(user);
-        setisFetching(false);
-        return;
-      }
-      setuser(null);
-      setisFetching(false);
+        setUser(user);
+        setIsFetching(false);
+        
     });
+
+    return () => unsubscribe();
   }, []);
 
   if (isFetching) {
-    return <h2>Loading...</h2>;
+    return <h2>Loading......</h2>;
   }
-  return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
 
-          <Route
-            path="/private"
-            element={
-              <ProtectedRoute user={user}>
-                <Private />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </>
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route index path="/" element={<Home />} />
+        <Route
+          path="/private"
+          element={
+            <ProtectedRoute user={user}>
+              <Private />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

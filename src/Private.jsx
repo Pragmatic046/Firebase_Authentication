@@ -1,30 +1,23 @@
-import React from "react";
-import { auth } from "./firebase";
-import { signOut } from "firebase/auth";
+import { signOut } from "firebase/auth"
+import { auth } from "./firebase"
 
-const Private = () => {
-  function Private() {
-    const handleSignout = () => {
-      signOut(auth)
-        .then(() => alert("Signed Out sucsessfully"))
-        .catch((error) => {
-          console.log(error);
-          alert(error.message);
-        });
-    };
+function Private() {
+  const handleSignout=()=>{
+    signOut(auth)
+    .than( alert("Signed out Successfully!"))
+    .catch(error=>{
+      console.log(error)
+      alert(error.message)
+    })
   }
-  return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-      }}
-    >
-      <h1>Private</h1>
-      <button onClick={handleSignout}>SignOut</button>
-    </div>
-  );
-};
+ 
 
-export default Private;
+    return (
+      <div>
+        <h1>Welcome to the Private Page</h1>
+        <button onClick={handleSignout}>Signout</button>
+      </div>
+    )
+  }
+  
+  export default Private
